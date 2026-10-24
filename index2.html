@@ -1,0 +1,281 @@
+  <!-- 상단 도구 모음 -->
+  <div class="flex items-center flex-wrap gap-2 text-xs">
+    <div class="flex items-center bg-monastery-800 rounded-lg px-2.5 py-1.5 border border-monastery-600/40">
+      <i class="fa-solid fa-user-pen mr-1.5 text-amber-400"></i>
+      <span class="text-stone-300 mr-1 hidden sm:inline">작성자:</span>
+      <select id="currentMemberSelect" class="bg-monastery-900 text-amber-200 font-semibold focus:outline-none rounded px-1 cursor-pointer">
+        <option value="멤버 1">멤버 1 (부부A 남편)</option>
+        <option value="멤버 2">멤버 2 (부부A 아내)</option>
+        <option value="멤버 3">멤버 3 (부부B 남편)</option>
+        <option value="멤버 4">멤버 4 (부부B 아내)</option>
+      </select>
+    </div>
+
+    <button onclick="window.print()" class="bg-stone-700 hover:bg-stone-600 text-stone-200 px-3 py-1.5 rounded-lg border border-stone-600 flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-print text-amber-300"></i>
+      <span>인쇄/PDF</span>
+    </button>
+
+    <button onclick="exportDataJson()" class="bg-monastery-800 hover:bg-monastery-700 text-stone-200 px-3 py-1.5 rounded-lg border border-monastery-600/50 flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-download text-amber-300"></i>
+      <span>백업(JSON)</span>
+    </button>
+
+    <label class="bg-monastery-800 hover:bg-monastery-700 text-stone-200 px-3 py-1.5 rounded-lg border border-monastery-600/50 flex items-center gap-1.5 cursor-pointer transition">
+      <i class="fa-solid fa-upload text-amber-300"></i>
+      <span>복원</span>
+      <input type="file" id="jsonFileInput" accept=".json" class="hidden" onchange="importDataJson(event)">
+    </label>
+
+    <div class="flex items-center px-2 py-1.5 rounded bg-emerald-950/80 text-[11px] text-emerald-300 border border-emerald-700/60">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+      <span>로컬 자동저장 활성</span>
+    </div>
+  </div>
+</div>
+
+<!-- 탭 네비게이션 -->
+<nav class="bg-monastery-800/95 border-t border-monastery-700 px-4 sm:px-8 overflow-x-auto">
+  <div class="max-w-7xl mx-auto flex space-x-1 sm:space-x-2 py-1.5 min-w-max">
+    <button onclick="switchTab('itinerary')" class="tab-btn active px-3.5 py-2 rounded-lg font-medium text-xs sm:text-sm flex items-center gap-2 text-white bg-monastery-600 transition shadow" data-target="itinerary">
+      <i class="fa-regular fa-calendar-days text-amber-300"></i> D1~D11 확정 일정표
+    </button>
+    <button onclick="switchTab('hotels')" class="tab-btn px-3.5 py-2 rounded-lg font-medium text-xs sm:text-sm flex items-center gap-2 text-stone-300 hover:text-white hover:bg-monastery-700/60 transition" data-target="hotels">
+      <i class="fa-solid fa-hotel text-amber-300"></i> 9박 숙소 목록
+    </button>
+    <button onclick="switchTab('budget')" class="tab-btn px-3.5 py-2 rounded-lg font-medium text-xs sm:text-sm flex items-center gap-2 text-stone-300 hover:text-white hover:bg-monastery-700/60 transition" data-target="budget">
+      <i class="fa-solid fa-coins text-amber-300"></i> 예산 & 4인 정산
+    </button>
+    <button onclick="switchTab('monasteries')" class="tab-btn px-3.5 py-2 rounded-lg font-medium text-xs sm:text-sm flex items-center gap-2 text-stone-300 hover:text-white hover:bg-monastery-700/60 transition" data-target="monasteries">
+      <i class="fa-solid fa-monument text-amber-300"></i> 수도원 & 미술 가이드
+    </button>
+    <button onclick="switchTab('checklist')" class="tab-btn px-3.5 py-2 rounded-lg font-medium text-xs sm:text-sm flex items-center gap-2 text-stone-300 hover:text-white hover:bg-monastery-700/60 transition" data-target="checklist">
+      <i class="fa-solid fa-list-check text-amber-300"></i> 예약 체크리스트
+    </button>
+    <button onclick="switchTab('contacts')" class="tab-btn px-3.5 py-2 rounded-lg font-medium text-xs sm:text-sm flex items-center gap-2 text-stone-300 hover:text-white hover:bg-monastery-700/60 transition" data-target="contacts">
+      <i class="fa-solid fa-address-book text-amber-300"></i> 공식 연락처 & 출처
+    </button>
+  </div>
+</nav>
+
+
+<!-- 여행 개요 요약 배너 -->
+<section class="mb-6 bg-gradient-to-r from-stone-900 via-monastery-900 to-stone-900 text-white rounded-2xl p-5 sm:p-6 shadow-lg border border-amber-900/40">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+    <div class="md:col-span-2">
+      <div class="flex items-center gap-2 mb-1.5">
+        <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs px-2.5 py-0.5 rounded-full font-semibold">9박 11일 이탈리아 완결</span>
+        <span class="text-stone-300 text-xs">2027.06.14(월) - 06.24(목)</span>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-bold font-serif text-amber-100">로마 · 수비아코 · 아시시 · 토스카나 · 피렌체 · 제노바 · 포르토피노</h2>
+      <p class="text-stone-300 text-xs sm:text-sm mt-1.5 leading-relaxed">
+        성 베네딕토와 성 프란체스코의 영성부터 피렌체 르네상스, 제노바 롤리 궁전군(스트라다 누오바)과 포르토피노 만의 절벽 수도원(산 프루투오소)까지 이어지는 단일 대안 집중 순례 기행.
+      </p>
+    </div>
+    <div class="flex items-center justify-around md:justify-end gap-6 md:col-span-2 border-t md:border-t-0 md:border-l border-stone-700/80 pt-3 md:pt-0 md:pl-6 text-center">
+      <div>
+        <div class="text-[11px] text-stone-400 uppercase tracking-wider">총 확정 예산</div>
+        <div class="text-lg sm:text-xl font-bold text-amber-300 font-sans">₩19,655,950</div>
+        <div class="text-[11px] text-stone-400">1인 약 ₩4,913,988</div>
+      </div>
+      <div>
+        <div class="text-[11px] text-stone-400 uppercase tracking-wider">교통 수단</div>
+        <div class="text-sm sm:text-base font-semibold text-stone-100">렌터카 7일 + 고속철도</div>
+        <div class="text-[11px] text-stone-400">제노바-로마 기차 연계</div>
+      </div>
+      <div>
+        <div class="text-[11px] text-stone-400 uppercase tracking-wider">동행 인원</div>
+        <div class="text-sm sm:text-base font-semibold text-emerald-400">성인 4인</div>
+        <div class="text-[11px] text-stone-400">부부 2쌍 (2객실)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 1: D1 ~ D11 확정 일정표 -->
+<div id="tab-itinerary" class="tab-pane space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
+    <div>
+      <h3 class="text-base sm:text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
+        <i class="fa-solid fa-route text-amber-700"></i> 일자별 상세 일정표 (D1 ~ D11)
+      </h3>
+      <p class="text-xs text-stone-500 mt-0.5">제노바 2연박(스트라다 누오바 궁전군 & 포르토피노) 및 D10 로마행 고속열차 직결 이동이 반영된 최종 일정입니다.</p>
+    </div>
+    <div class="flex items-center gap-2 text-xs">
+      <button onclick="toggleAllDays(true)" class="px-2.5 py-1.5 rounded bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium">모두 펼치기</button>
+      <button onclick="toggleAllDays(false)" class="px-2.5 py-1.5 rounded bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium">모두 접기</button>
+    </div>
+  </div>
+
+  <div id="itineraryContainer" class="space-y-4"></div>
+</div>
+
+<!-- TAB 2: 9박 숙소 목록 -->
+<div id="tab-hotels" class="tab-pane hidden space-y-4">
+  <div class="bg-white p-4 sm:p-5 rounded-xl border border-stone-200 shadow-sm flex flex-wrap justify-between items-center gap-3">
+    <div>
+      <h3 class="text-base sm:text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
+        <i class="fa-solid fa-bed text-amber-700"></i> 9박 숙소 상세 목록 (부부 2쌍 / 2객실)
+      </h3>
+      <p class="text-xs text-stone-500 mt-0.5">
+        기준환율: 1유로 = 1,470원 | 총 9박 합계: 약 €3,440 (~₩5,056,800) | 제노바 중심가 특급 2연박 반영
+      </p>
+    </div>
+    <span class="badge-pill bg-amber-100 text-amber-900 border border-amber-300">
+      주차 완비 및 역세권 이동성 최적화
+    </span>
+  </div>
+
+  <div id="hotelsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-5"></div>
+</div>
+
+<!-- TAB 3: 예산 & 4인 정산 -->
+<div id="tab-budget" class="tab-pane hidden space-y-6">
+  <div class="bg-white rounded-xl border border-stone-200 shadow-sm p-5">
+    <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+      <div>
+        <h3 class="text-base sm:text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
+          <i class="fa-solid fa-calculator text-amber-700"></i> 기행 종합 예산표 (로마 왕복 확정안)
+        </h3>
+        <p class="text-xs text-stone-500">서울-로마 왕복 항공, 렌터카 7일 국내 편도, 제노바-로마 기차 및 포르토피노 페리가 반영된 정산 내역입니다.</p>
+      </div>
+      <div class="text-right">
+        <span class="text-xs text-stone-500">총 예산액</span>
+        <div class="text-xl sm:text-2xl font-bold text-amber-800 font-sans">₩19,655,950</div>
+        <div class="text-xs text-emerald-700 font-semibold">1인당 ₩4,913,988</div>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs sm:text-sm border-collapse">
+        <thead>
+          <tr class="bg-monastery-100 border-y border-stone-300 text-stone-700 font-semibold">
+            <th class="py-2.5 px-3">구분</th>
+            <th class="py-2.5 px-3">세부 항목</th>
+            <th class="py-2.5 px-3 text-right">예상금액(EUR)</th>
+            <th class="py-2.5 px-3 text-right">예상금액(KRW)</th>
+            <th class="py-2.5 px-3">산출 근거 (1유로=1,470원 기준)</th>
+          </tr>
+        </thead>
+        <tbody id="budgetTableBody" class="divide-y divide-stone-200"></tbody>
+        <tfoot>
+          <tr class="bg-stone-900 text-amber-200 font-bold border-t-2 border-amber-600">
+            <td colspan="2" class="py-3 px-3 text-sm">합계 (4인 총 경비)</td>
+            <td class="py-3 px-3 text-right text-sm">€8,745.54</td>
+            <td class="py-3 px-3 text-right text-sm">₩19,655,950</td>
+            <td class="py-3 px-3 text-xs text-stone-300">1인당 약 ₩4,913,988 (왕복 항공권 4인 680만 원 포함)</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- 현지 추가 지출 실시간 정산기 -->
+  <div class="bg-white rounded-xl border border-stone-200 shadow-sm p-5">
+    <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
+      <div>
+        <h4 class="text-sm sm:text-base font-bold text-stone-900 flex items-center gap-2">
+          <i class="fa-solid fa-receipt text-tuscanOlive"></i> 4인 실시간 공동 경비 정산기 (추가지출 기록)
+        </h4>
+        <p class="text-xs text-stone-500">현지에서 결제한 카페, 주유, 마트, 간식 영수증을 등록하면 1/N 균등 정산이 자동 계산됩니다.</p>
+      </div>
+      <button onclick="openAddExpenseModal()" class="px-3 py-1.5 bg-monastery-800 hover:bg-monastery-700 text-white rounded-lg text-xs font-semibold shadow transition flex items-center gap-1.5">
+        <i class="fa-solid fa-plus text-amber-300"></i> 지출 항목 추가
+      </button>
+    </div>
+
+    <div id="expensesList" class="space-y-2 mb-4"></div>
+
+    <div class="bg-stone-50 rounded-lg p-3.5 border border-stone-200 flex flex-wrap justify-between items-center text-xs sm:text-sm">
+      <div>
+        <span class="text-stone-600">기록된 추가 공동경비: </span>
+        <span id="extraExpenseTotal" class="font-bold text-stone-900">₩0</span>
+      </div>
+      <div>
+        <span class="text-stone-600">1인당 추가 분담금: </span>
+        <span id="extraExpensePerPerson" class="font-bold text-terracotta">₩0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: 수도원 & 성미술 가이드 -->
+<div id="tab-monasteries" class="tab-pane hidden space-y-4">
+  <div class="bg-white p-4 sm:p-5 rounded-xl border border-stone-200 shadow-sm">
+    <h3 class="text-base sm:text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
+      <i class="fa-solid fa-cross text-amber-700"></i> 순례 수도원 및 핵심 건축·성미술 컬렉션
+    </h3>
+    <p class="text-xs text-stone-500 mt-1">
+      서방 수도생활의 기원부터 프란체스코회 은수처, 르네상스 프레스코, 그리고 제노바 롤리 궁전군(스트라다 누오바)과 포르토피노 만의 절벽 수도원(산 프루투오소)까지 수록했습니다.
+    </p>
+  </div>
+
+  <div id="monasteriesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+</div>
+
+<!-- TAB 5: 예약 체크리스트 -->
+<div id="tab-checklist" class="tab-pane hidden space-y-4">
+  <div class="bg-white p-4 sm:p-5 rounded-xl border border-stone-200 shadow-sm flex flex-wrap justify-between items-center gap-3">
+    <div>
+      <h3 class="text-base sm:text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
+        <i class="fa-solid fa-calendar-check text-amber-700"></i> 여행 전 예약 체크리스트 (수정 확정안)
+      </h3>
+      <p class="text-xs text-stone-500 mt-1">
+        서울-로마 왕복 항공, 로마 픽업/제노바 반납 렌터카, 제노바-로마 고속열차 1등석, 박물관 통합권 예약 상태를 확인합니다.
+      </p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-xs text-stone-500">진행률:</span>
+      <div class="w-28 sm:w-36 bg-stone-200 h-3 rounded-full overflow-hidden">
+        <div id="checklistProgressBar" class="bg-emerald-600 h-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+      <span id="checklistProgressText" class="text-xs font-bold text-stone-700">0%</span>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl border border-stone-200 overflow-hidden shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs sm:text-sm">
+        <thead>
+          <tr class="bg-stone-100 text-stone-700 border-b border-stone-300 font-semibold">
+            <th class="py-3 px-4 w-12 text-center">완료</th>
+            <th class="py-3 px-4">구분 / 예약 항목</th>
+            <th class="py-3 px-4">권장 예약 시기</th>
+            <th class="py-3 px-4">예약 방법 / 채널</th>
+            <th class="py-3 px-4">필수 확인 및 주의사항</th>
+            <th class="py-3 px-4 text-center">담당</th>
+          </tr>
+        </thead>
+        <tbody id="checklistTableBody" class="divide-y divide-stone-200"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 6: 공식 연락처 & 출처 -->
+<div id="tab-contacts" class="tab-pane hidden space-y-4">
+  <div class="bg-white p-4 sm:p-5 rounded-xl border border-stone-200 shadow-sm">
+    <h3 class="text-base sm:text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
+      <i class="fa-solid fa-book-bookmark text-amber-700"></i> 현지 공식 사이트, 주소, 연락처 및 출처 데이터
+    </h3>
+    <p class="text-xs text-stone-500 mt-1">
+      제노바 스트라다 누오바 박물관 및 이탈리아 철도청(트랜이탈리아), 산 프루투오소 수도원 공식 도메인과 연락처입니다.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm">
+      <h4 class="font-bold text-stone-900 mb-3 flex items-center gap-2 border-b pb-2 text-sm">
+        <i class="fa-solid fa-phone text-tuscanOlive"></i> 숙소 및 거점 공식 연락처 모음
+      </h4>
+      <div id="hotelContactsList" class="space-y-2.5 text-xs"></div>
+    </div>
+
+    <div class="bg-white p-5 rounded-xl border border-stone-200 shadow-sm">
+      <h4 class="font-bold text-stone-900 mb-3 flex items-center gap-2 border-b pb-2 text-sm">
+        <i class="fa-solid fa-globe text-amber-700"></i> 기행 참조 공식 사이트 및 정보 출처
+      </h4>
+      <div id="sourcesList" class="space-y-2.5 text-xs"></div>
+    </div>
+  </div>
+</div>
